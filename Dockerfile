@@ -1,22 +1,20 @@
-FROM tutum/debian
-MAINTAINER Mark Redar mredar@gmail.com
+FROM ubuntu:18.04
 
-#TODO: make this a build container. What does that mean for python?
-RUN apt-get update
-RUN apt-get upgrade -y
-
-RUN apt-get install -y -q git
-RUN apt-get install -y -q mercurial
-RUN apt-get install -y -q python-dev
-RUN apt-get install -y -q python-pip
-RUN apt-get install -y -q libxml2-dev
-RUN apt-get install -y -q libxslt-dev
+RUN apt-get update && apt-get install -y \
+    git \
+    mercurial \
+    python-dev \
+    python-pip \
+    libxml2-dev \
+    libxslt-dev \
+    libz-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /code/dpla/ingestion
 WORKDIR /code/dpla
 ADD ingestion /code/dpla/ingestion
-WORKDIR ingestion
-RUN pip install --no-deps --ignore-installed -r requirements.txt
+WORKDIR /code/dpla/ingestion
+RUN pip install configparser && pip install --no-deps --ignore-installed -r requirements.txt
 
 ADD ./akara.ini.tmpl /code/dpla/ingestion/akara.ini
 
